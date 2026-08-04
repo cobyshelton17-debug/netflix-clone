@@ -33,8 +33,6 @@ function Nav({onHome, filters, onFilters}){
                 <button className="navButton" onClick={() => setShowMenu(s => !s)} aria-label="Menu">
                    <i className="fa-solid fa-bars"></i>
                 </button>
-                        <button className="languageBtn">English</button>
-                        <button className="btn">Sign In</button>
                 <div className="navButtons">
                     <button className="languageBtn">English</button>
                     <button className="btn">Sign In</button>
