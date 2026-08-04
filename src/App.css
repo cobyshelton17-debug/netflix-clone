@@ -61,3 +61,13 @@ body, .home, .movie-page, .movie-trailers, .movie-details, .movie-plans, .movie-
   text-align: center;
 }
 
+.filter-bar-mobile {
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .filter-bar-mobile {
+    display: block;
+  }
+}
+

@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import './Nav.css'
+import FilterBar from './FilterBar.jsx'
+import FilterSelects from './FilterSelects.jsx'
 
-function Nav({onHome}){
+function Nav({onHome, filters, onFilters}){
+    const { search, genre, year, sort, genres, years } = filters
+    const { onSearch, onGenre, onYear, onSort } = onFilters
     const [showMenu, setShowMenu] = useState(false)
     const menuRef = useRef()
 
@@ -19,11 +23,43 @@ function Nav({onHome}){
         <div>
             <div className="navWrapper" ref={menuRef}>
                 <div className="navImage" onClick={onHome}></div>
-                <button className="navButton" onClick={() => setShowMenu(s => !s)}>
+                <input
+                    type="text"
+                    placeholder="Search titles..."
+                    value={search}
+                    onChange={(e) => onSearch(e.target.value)}
+                    className="navSearch-mobile"
+                />
+                <button className="navButton" onClick={() => setShowMenu(s => !s)} aria-label="Menu">
                    <i className="fa-solid fa-bars"></i>
                 </button>
+                <FilterBar
+                    className="filter-bar filter-bar-nav"
+                    search={search}
+                    onSearch={onSearch}
+                    genre={genre}
+                    onGenre={onGenre}
+                    genres={genres}
+                    year={year}
+                    onYear={onYear}
+                    years={years}
+                    sort={sort}
+                    onSort={onSort}
+                />
                 {showMenu && (
                     <div className="navPopup">
+                        <div className="navPopupFilters">
+                            <FilterSelects
+                                genre={genre}
+                                onGenre={onGenre}
+                                genres={genres}
+                                year={year}
+                                onYear={onYear}
+                                years={years}
+                                sort={sort}
+                                onSort={onSort}
+                            />
+                        </div>
                         <button className="languageBtn">English</button>
                         <button className="btn">Sign In</button>
                     </div>

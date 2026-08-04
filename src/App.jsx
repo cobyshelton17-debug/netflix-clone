@@ -3,12 +3,20 @@ import './App.css';
 import Nav from './components/Nav.jsx'
 import Cards from './components/Cards.jsx'
 import Movie from './components/Movie.jsx'
-import { fetchMoviesList, fetchMovieDetails } from './api/movies.js'
+import FilterBar from './components/FilterBar.jsx'
+import Footer from './components/Footer.jsx'
+import { fetchMoviesList, fetchGenres, fetchMovieDetails } from './api/movies.js'
 
 function App() {
   const [movies, setMovies] = useState([])
+  const [genres, setGenres] = useState([])
   const [listLoading, setListLoading] = useState(true)
   const [listError, setListError] = useState(null)
+
+  const [search, setSearch] = useState("")
+  const [genre, setGenre] = useState("")
+  const [year, setYear] = useState("")
+  const [sort, setSort] = useState("popular")
 
   const [selectedId, setSelectedId] = useState(null)
   const [detail, setDetail] = useState(null)
@@ -17,8 +25,11 @@ function App() {
   const detailCache = useRef(new Map())
 
   useEffect(() => {
-    fetchMoviesList(3)
-      .then(setMovies)
+    Promise.all([fetchMoviesList(3), fetchGenres()])
+      .then(([list, genreMap]) => {
+        setMovies(list)
+        setGenres(Object.entries(genreMap).map(([id, name]) => ({ id: Number(id), name })))
+      })
       .catch((e) => setListError(e.message))
       .finally(() => setListLoading(false))
   }, [])
@@ -68,6 +79,25 @@ function App() {
     { title: "Horror", movies: movies.filter((m) => m.genreIds.includes(27)) },
   ]
 
+  const hasFilters = search !== "" || genre !== "" || year !== "" || sort !== "popular"
+
+  const visibleMovies = movies.filter((m) => {
+    if (search && !m.title.toLowerCase().includes(search.toLowerCase())) return false
+    if (genre && !m.genreIds.includes(Number(genre))) return false
+    if (year && String(m.year) !== year) return false
+    return true
+  })
+
+  const sortedMovies = [...visibleMovies].sort((a, b) => {
+    switch (sort) {
+      case "rating": return b.rating - a.rating
+      case "title": return a.title.localeCompare(b.title)
+      default: return b.popularity - a.popularity
+    }
+  })
+
+  const years = [...new Set(movies.map((m) => m.year).filter(Boolean))].sort((a, b) => b - a)
+
   return (
     <>
       {selectedId != null ? (
@@ -83,17 +113,44 @@ function App() {
         ) : null
       ) : (
         <>
-          <Nav onHome={goHome} />
+          <Nav
+            onHome={goHome}
+            filters={{ search, genre, year, sort, genres, years }}
+            onFilters={{ onSearch: setSearch, onGenre: setGenre, onYear: setYear, onSort: setSort }}
+          />
           <div className="home">
+            <div className="filter-bar-mobile">
+              <FilterBar
+                search={search}
+                onSearch={setSearch}
+                genre={genre}
+                onGenre={setGenre}
+                genres={genres}
+                year={year}
+                onYear={setYear}
+                years={years}
+                sort={sort}
+                onSort={setSort}
+              />
+            </div>
             {listLoading && <p className="status-msg">Loading titles...</p>}
             {listError && <p className="status-msg">Couldn't load titles: {listError}</p>}
             {!listLoading && !listError && (
-              categories
-                .filter((cat) => cat.movies.length > 0)
-                .map((cat, i) => (
-                  <Cards key={i} title={cat.title} movies={cat.movies} onSelect={openDetail} />
-                ))
+              hasFilters ? (
+                sortedMovies.length > 0 ? (
+                  <Cards title={`Results (${sortedMovies.length})`} movies={sortedMovies} onSelect={openDetail} />
+                ) : (
+                  <p className="status-msg">No titles match your filters.</p>
+                )
+              ) : (
+                categories
+                  .filter((cat) => cat.movies.length > 0)
+                  .map((cat, i) => (
+                    <Cards key={i} title={cat.title} movies={cat.movies} onSelect={openDetail} />
+                  ))
+              )
             )}
+            <Footer />
           </div>
         </>
       )}

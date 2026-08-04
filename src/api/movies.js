@@ -8,22 +8,31 @@ async function fetchJson(url) {
   return res.json()
 }
 
-export async function fetchMoviesList(pages = 3) {
+const toSummary = (m) => ({
+  id: m.id,
+  title: m.title,
+  genreIds: m.genre_ids || [],
+  year: m.release_date ? m.release_date.slice(0, 4) : null,
+  rating: m.vote_average || 0,
+  popularity: m.popularity || 0,
+  image: `${IMAGE}/w342${m.poster_path}`,
+})
+
+async function fetchPages(endpoint, pages) {
   const requests = Array.from({ length: pages }, (_, i) =>
-    fetchJson(`${BASE}/trending/movie/day?api_key=${KEY}&page=${i + 1}`)
+    fetchJson(`${BASE}${endpoint}${endpoint.includes("?") ? "&" : "?"}api_key=${KEY}&page=${i + 1}`)
   )
   const responses = await Promise.all(requests)
   const seen = new Set()
   return responses.flatMap((data) =>
     data.results
       .filter((m) => m.poster_path && !seen.has(m.id) && seen.add(m.id))
-      .map((m) => ({
-        id: m.id,
-        title: m.title,
-        genreIds: m.genre_ids || [],
-        image: `${IMAGE}/w342${m.poster_path}`,
-      }))
+      .map(toSummary)
   )
+}
+
+export async function fetchMoviesList(pages = 3) {
+  return fetchPages("/trending/movie/day", pages)
 }
 
 export async function fetchGenres() {
