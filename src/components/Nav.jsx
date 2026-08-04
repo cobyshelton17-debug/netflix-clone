@@ -20,7 +20,7 @@ function Nav({onHome}){
             <div className="navWrapper" ref={menuRef}>
                 <div className="navImage" onClick={onHome}></div>
                 <button className="navButton" onClick={() => setShowMenu(s => !s)}>
-                   <i class="fa-solid fa-bars"></i>
+                   <i className="fa-solid fa-bars"></i>
                 </button>
                 {showMenu && (
                     <div className="navPopup">

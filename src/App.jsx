@@ -41,7 +41,8 @@ function App() {
     return () => { cancelled = true }
   }, [selectedId])
 
-  const openDetail = (id) => {
+  const openDetail = (item) => {
+    const id = typeof item === 'number' ? item : item.id
     const cached = detailCache.current.get(id)
     setSelectedId(id)
     setDetailError(null)
