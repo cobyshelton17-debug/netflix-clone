@@ -1,5 +1,4 @@
 import './Titles.css';
-import React from 'react';
 
 function Titles({title}){
 

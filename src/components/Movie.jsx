@@ -16,11 +16,14 @@ function Movie({movie, onSelect, onHome}){
             <span className="movie-year">{movie.year}</span>
             <span className="movie-rating">{movie.rating}</span>
             <span className="movie-genre">{movie.genre}</span>
+            <span className="movie-runtime">{movie.runtime}</span>
           </div>
           <p className="movie-description">{movie.description}</p>
-          <div className="movie-cast">
-            <strong>Starring: </strong>{movie.cast.join(", ")}
-          </div>
+          {movie.cast?.length > 0 && (
+            <div className="movie-cast">
+              <strong>Starring: </strong>{movie.cast.join(", ")}
+            </div>
+          )}
           <div className="movie-hero-buttons">
             <button className="play-btn">Play</button>
             <button className="more-info-btn">More Info</button>
@@ -43,14 +46,18 @@ function Movie({movie, onSelect, onHome}){
             <h4>Genres</h4>
             <p>{movie.genres.join(", ")}</p>
           </div>
-          <div className="detail-section">
-            <h4>Audio</h4>
-            <p>{movie.audio.join(", ")}</p>
-          </div>
-          <div className="detail-section">
-            <h4>Subtitles</h4>
-            <p>{movie.subtitles.join(", ")}</p>
-          </div>
+          {movie.audio?.length > 0 && (
+            <div className="detail-section">
+              <h4>Audio</h4>
+              <p>{movie.audio.join(", ")}</p>
+            </div>
+          )}
+          {movie.subtitles?.length > 0 && (
+            <div className="detail-section">
+              <h4>Subtitles</h4>
+              <p>{movie.subtitles.join(", ")}</p>
+            </div>
+          )}
         </div>
       </div>
 
