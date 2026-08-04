@@ -33,37 +33,8 @@ function Nav({onHome, filters, onFilters}){
                 <button className="navButton" onClick={() => setShowMenu(s => !s)} aria-label="Menu">
                    <i className="fa-solid fa-bars"></i>
                 </button>
-                <FilterBar
-                    className="filter-bar filter-bar-nav"
-                    search={search}
-                    onSearch={onSearch}
-                    genre={genre}
-                    onGenre={onGenre}
-                    genres={genres}
-                    year={year}
-                    onYear={onYear}
-                    years={years}
-                    sort={sort}
-                    onSort={onSort}
-                />
-                {showMenu && (
-                    <div className="navPopup">
-                        <div className="navPopupFilters">
-                            <FilterSelects
-                                genre={genre}
-                                onGenre={onGenre}
-                                genres={genres}
-                                year={year}
-                                onYear={onYear}
-                                years={years}
-                                sort={sort}
-                                onSort={onSort}
-                            />
-                        </div>
                         <button className="languageBtn">English</button>
                         <button className="btn">Sign In</button>
-                    </div>
-                )}
                 <div className="navButtons">
                     <button className="languageBtn">English</button>
                     <button className="btn">Sign In</button>
